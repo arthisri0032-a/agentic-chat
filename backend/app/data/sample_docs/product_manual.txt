@@ -1,0 +1,37 @@
+Aurora RoboArm X1 — Product Manual
+
+Overview
+The Aurora RoboArm X1 is a six-axis desktop robotic arm designed for light industrial automation,
+educational robotics, and rapid prototyping. It has a reach of 650mm, a maximum payload of 2.5kg,
+and repeatability of ±0.05mm. The arm ships with the Aurora Motion Controller (AMC-2) and the
+Aurora SDK for Python and C++.
+
+Setup
+1. Mount the base plate on a flat surface using the four M6 bolts provided in the accessory kit.
+2. Connect the AMC-2 controller to the arm using the 12-pin motion cable. Do not force the connector;
+   it is keyed and only fits one way.
+3. Connect the controller to a 24V/10A power supply. The status LED will blink amber during boot and
+   turn solid green once the controller is ready.
+4. Install the Aurora SDK with `pip install aurora-sdk` and run `aurora-calibrate` to perform the
+   initial homing sequence. Homing takes approximately 90 seconds and must be repeated after any
+   firmware update.
+
+Safety
+Always keep the workspace clear of obstructions within the arm's full range of motion before powering
+it on. The RoboArm X1 includes a soft-stop feature that halts motion if unexpected resistance is
+detected, but this is not a substitute for a physical safety cage in shared workspaces. Emergency stop
+is triggered by pressing the red button on the AMC-2 or by calling `arm.estop()` in the SDK.
+
+Maintenance
+Lubricate the joint gearboxes every 500 operating hours using Aurora Grease AG-3. Inspect the timing
+belts for wear every 1000 hours. Firmware updates are released quarterly and can be applied with
+`aurora-flash --latest`. The warranty period for the RoboArm X1 is 24 months from the date of purchase
+and covers manufacturing defects in the arm and controller, but not damage from unauthorized firmware
+or exceeding the rated payload.
+
+Troubleshooting
+If the arm fails to home, check that all joints can move freely by hand with the controller powered
+off, then re-run `aurora-calibrate`. Error code E-12 indicates a communication timeout between the SDK
+and the AMC-2; this is usually resolved by reseating the USB cable or reducing the polling rate in
+`config.yaml`. Error code E-27 indicates a joint has exceeded its torque limit and usually means the
+payload exceeds 2.5kg or an obstruction is present.

@@ -1,0 +1,42 @@
+Aurora SDK — API Reference (Python)
+
+Installation
+Install with `pip install aurora-sdk`. The SDK requires Python 3.9 or later and communicates with the
+AMC-2 controller over USB using a documented serial protocol running at 921600 baud.
+
+Connecting
+```
+from aurora_sdk import Arm
+arm = Arm(port="auto")   # auto-detects the AMC-2 over USB
+arm.home()                # runs the homing sequence, ~90 seconds
+```
+If `port="auto"` fails to find the controller, pass the explicit serial device, e.g.
+`Arm(port="COM5")` on Windows or `Arm(port="/dev/ttyUSB0")` on Linux.
+
+Movement
+`arm.move_joint(joint_index, degrees, speed=0.5)` moves a single joint to an absolute angle in degrees,
+where speed ranges from 0.0 to 1.0. `arm.move_cartesian(x, y, z, speed=0.5)` moves the end effector to
+an absolute position in millimeters relative to the base frame. Both calls block until the motion
+completes unless `blocking=False` is passed, in which case they return immediately and motion status
+can be polled with `arm.is_moving()`.
+
+Gripper Control
+`arm.gripper.open()` and `arm.gripper.close(force=0.5)` control the optional parallel gripper
+attachment. Force ranges from 0.0 (barely touching) to 1.0 (maximum clamping force, ~40N).
+
+Safety and Limits
+`arm.set_payload(kg)` should be called whenever the end-of-arm tooling changes; exceeding the rated
+2.5kg payload can trigger error E-27 and, if ignored repeatedly, may damage the joint gearboxes.
+`arm.estop()` immediately cuts motor power. After an e-stop, `arm.reset()` must be called before
+further motion commands are accepted.
+
+Events and Telemetry
+The SDK exposes an event bus: `arm.on("joint_limit", callback)` fires when a joint approaches its
+mechanical limit, and `arm.on("error", callback)` fires on any controller error code, passing the code
+and a human-readable message. Telemetry (joint angles, currents, temperatures) can be streamed at up to
+100Hz via `arm.stream_telemetry(callback, rate_hz=50)`.
+
+Versioning
+The SDK follows semantic versioning. Breaking changes to the serial protocol are only introduced in
+major versions, and the SDK negotiates protocol version with the controller firmware at connect time,
+raising `ProtocolMismatchError` if the firmware is too old for the installed SDK.

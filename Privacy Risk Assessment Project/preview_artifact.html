@@ -1,0 +1,336 @@
+<title>Privacy Risk Dossier</title>
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F6F3;
+    --paper-raised:#FFFFFF;
+    --ink:#1B1F1E;
+    --ink-soft:#4B5451;
+    --accent:#2F5D62;
+    --accent-soft:#E4EEEC;
+    --accent-2:#8A6D3B;
+    --line:#D9DCD6;
+    --risk-high-bg:#FBE4E1; --risk-high-fg:#8A241B;
+    --risk-med-bg:#F6E7C8; --risk-med-fg:#7A5A12;
+    --risk-low-bg:#DEEFE2; --risk-low-fg:#1B6B3A;
+    --shadow: 0 1px 2px rgba(20,30,28,0.06), 0 8px 24px rgba(20,30,28,0.05);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#15191A;
+      --paper-raised:#1D2223;
+      --ink:#E9ECEA;
+      --ink-soft:#A9B2AE;
+      --accent:#7FC2C6;
+      --accent-soft:#1F3436;
+      --accent-2:#D3B077;
+      --line:#2B3233;
+      --risk-high-bg:#3A2320; --risk-high-fg:#FF8A7A;
+      --risk-med-bg:#3A2F17; --risk-med-fg:#F0C86A;
+      --risk-low-bg:#1E3426; --risk-low-fg:#73D99A;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#15191A;
+    --paper-raised:#1D2223;
+    --ink:#E9ECEA;
+    --ink-soft:#A9B2AE;
+    --accent:#7FC2C6;
+    --accent-soft:#1F3436;
+    --accent-2:#D3B077;
+    --line:#2B3233;
+    --risk-high-bg:#3A2320; --risk-high-fg:#FF8A7A;
+    --risk-med-bg:#3A2F17; --risk-med-fg:#F0C86A;
+    --risk-low-bg:#1E3426; --risk-low-fg:#73D99A;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,sans-serif;
+    margin:0;
+    padding-inline:20px;
+    padding-block:40px;
+  }
+  .wrap{max-width:760px;margin:0 auto;}
+
+  .doc-tag{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11px;letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--accent-2);
+    margin-bottom:18px;
+  }
+  .doc-tag::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent-2);display:inline-block;}
+
+  header.cover{
+    border-bottom:1px solid var(--line);
+    padding-bottom:28px;
+    margin-bottom:32px;
+  }
+  h1.title{
+    font-family:"Source Serif 4",Georgia,serif;
+    font-weight:650;
+    font-size:clamp(28px,5vw,40px);
+    line-height:1.12;
+    letter-spacing:-0.01em;
+    margin:0 0 10px;
+    text-wrap:balance;
+    color:var(--ink);
+  }
+  .subtitle{
+    font-size:17px;
+    color:var(--ink-soft);
+    margin:0 0 16px;
+    max-width:60ch;
+  }
+  .meta-row{
+    display:flex;flex-wrap:wrap;gap:10px;
+    font-family:"IBM Plex Mono",monospace;
+    font-size:12px;color:var(--ink-soft);
+  }
+  .meta-pill{
+    border:1px solid var(--line);
+    border-radius:5px;
+    padding:4px 9px;
+    background:var(--paper-raised);
+  }
+
+  nav.toc{
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px 18px;
+    margin-bottom:36px;
+    box-shadow:var(--shadow);
+  }
+  nav.toc .toc-label{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11px;letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--ink-soft);margin-bottom:10px;
+  }
+  nav.toc ol{
+    margin:0;padding:0;list-style:none;
+    columns:2;column-gap:20px;
+  }
+  @media (max-width:520px){ nav.toc ol{columns:1;} }
+  nav.toc li{break-inside:avoid;margin-bottom:6px;}
+  nav.toc a{
+    color:var(--ink);text-decoration:none;font-size:13.5px;
+    border-bottom:1px solid transparent;
+  }
+  nav.toc a:hover, nav.toc a:focus-visible{border-bottom-color:var(--accent);color:var(--accent);}
+
+  section{margin-bottom:38px;scroll-margin-top:16px;}
+  h2{
+    font-family:"Source Serif 4",Georgia,serif;
+    font-weight:600;
+    font-size:22px;
+    color:var(--accent);
+    margin:0 0 14px;
+    display:flex;align-items:baseline;gap:10px;
+  }
+  h2 .num{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:13px;color:var(--ink-soft);
+  }
+  h3{
+    font-family:"IBM Plex Sans",sans-serif;
+    font-weight:600;font-size:15px;
+    color:var(--ink);
+    margin:22px 0 10px;
+  }
+  p{line-height:1.65;font-size:15.5px;color:var(--ink);max-width:68ch;margin:0 0 14px;}
+  .lede{color:var(--ink-soft);}
+  ul{margin:0 0 14px;padding-left:1.3em;}
+  li{line-height:1.6;font-size:15.5px;margin-bottom:6px;max-width:66ch;}
+  em{color:var(--ink-soft);font-style:italic;}
+
+  .table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);}
+  table{
+    border-collapse:collapse;width:100%;min-width:640px;
+    background:var(--paper-raised);
+    font-size:13.5px;
+  }
+  thead th{
+    text-align:left;
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11px;letter-spacing:0.05em;text-transform:uppercase;
+    color:var(--ink-soft);
+    background:var(--accent-soft);
+    padding:10px 12px;
+    border-bottom:1px solid var(--line);
+    white-space:nowrap;
+  }
+  tbody td{
+    padding:10px 12px;
+    border-bottom:1px solid var(--line);
+    vertical-align:top;
+    color:var(--ink);
+  }
+  tbody tr:last-child td{border-bottom:none;}
+  td.id-cell{font-family:"IBM Plex Mono",monospace;font-weight:600;color:var(--accent);white-space:nowrap;}
+
+  .pill{
+    display:inline-block;
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11.5px;font-weight:600;
+    padding:2px 9px;border-radius:999px;
+    white-space:nowrap;
+  }
+  .pill.high{background:var(--risk-high-bg);color:var(--risk-high-fg);}
+  .pill.medium{background:var(--risk-med-bg);color:var(--risk-med-fg);}
+  .pill.low{background:var(--risk-low-bg);color:var(--risk-low-fg);}
+
+  .finding{
+    border-left:3px solid var(--accent);
+    background:var(--accent-soft);
+    padding:10px 16px;
+    border-radius:0 8px 8px 0;
+    margin-bottom:10px;
+    font-size:14.5px;
+    line-height:1.55;
+  }
+
+  footer.note{
+    border-top:1px solid var(--line);
+    margin-top:44px;padding-top:18px;
+    font-size:12.5px;color:var(--ink-soft);
+    font-family:"IBM Plex Mono",monospace;
+  }
+</style>
+
+<div class="wrap">
+  <header class="cover">
+    <div class="doc-tag">Document preview</div>
+    <h1 class="title">Privacy Risk Assessment &amp; Data Protection Framework</h1>
+    <p class="subtitle">Case study: a consumer healthcare &amp; fitness mobile application — a self-directed project in Cyber Risk Advisory &amp; Privacy Tech.</p>
+    <div class="meta-row">
+      <span class="meta-pill">Privacy_Risk_Assessment_Report.docx</span>
+      <span class="meta-pill">6 risks assessed</span>
+      <span class="meta-pill">8 sections</span>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="Table of contents">
+    <div class="toc-label">In this report</div>
+    <ol>
+      <li><a href="#s1">1. Executive Summary</a></li>
+      <li><a href="#s2">2. Scope &amp; Objectives</a></li>
+      <li><a href="#s3">3. Methodology</a></li>
+      <li><a href="#s4">4. Data Inventory &amp; Flow Mapping</a></li>
+      <li><a href="#s5">5. Risk Assessment &amp; Register</a></li>
+      <li><a href="#s6">6. Key Findings</a></li>
+      <li><a href="#s7">7. Recommended Framework</a></li>
+      <li><a href="#s8">8. Conclusion</a></li>
+    </ol>
+  </nav>
+
+  <section id="s1">
+    <h2><span class="num">01</span> Executive Summary</h2>
+    <p>This project evaluates the privacy and data protection posture of a hypothetical consumer health and fitness mobile application (&ldquo;the App&rdquo;) that collects biometric, location, and behavioral data from users and wearable devices. The assessment applies recognized frameworks — the NIST Privacy Framework, ISO/IEC 27701, and core principles from GDPR, CCPA, and HIPAA-adjacent health-data handling — to identify data protection gaps and propose a practical remediation framework.</p>
+    <p class="lede">Six material risks were identified, the most severe relating to unencrypted biometric data transmission, overly broad consent language, and indefinite data retention. A phased control framework is recommended to bring the App's data handling practices in line with regulatory expectations and industry best practice.</p>
+  </section>
+
+  <section id="s2">
+    <h2><span class="num">02</span> Scope &amp; Objectives</h2>
+    <p>The assessment covers the App's end-to-end personal data lifecycle: collection (in-app sensors, wearable sync, manual entry), transmission, storage, processing (including third-party analytics), and deletion.</p>
+    <ul>
+      <li>Map all categories of personal and sensitive (biometric/health) data collected and processed</li>
+      <li>Assess privacy and security risk across the data lifecycle using a standard risk-rating methodology</li>
+      <li>Evaluate current consent and disclosure practices against GDPR/CCPA requirements</li>
+      <li>Recommend a prioritized data protection control framework</li>
+    </ul>
+  </section>
+
+  <section id="s3">
+    <h2><span class="num">03</span> Methodology</h2>
+    <p>The assessment followed a four-stage approach aligned to the NIST Privacy Framework (Identify → Govern → Control → Communicate) and ISO/IEC 27701 privacy information management guidance:</p>
+    <ul>
+      <li>Data mapping — inventory of data categories, sources, storage locations, and retention periods</li>
+      <li>Risk identification — structured walkthrough of the data lifecycle to identify control gaps</li>
+      <li>Risk rating — likelihood × impact scoring to prioritize findings</li>
+      <li>Control recommendation — mapping each finding to a specific, actionable mitigation</li>
+    </ul>
+  </section>
+
+  <section id="s4">
+    <h2><span class="num">04</span> Data Inventory &amp; Flow Mapping</h2>
+    <p>Principal categories of data the App collects, their sensitivity classification, and current handling practices.</p>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Data category</th><th>Examples</th><th>Sensitivity</th><th>Collection point</th><th>Storage location</th><th>Retention</th></tr></thead>
+        <tbody>
+          <tr><td>Account/Identity Data</td><td>Name, email, DOB, device ID</td><td><span class="pill medium">Medium</span></td><td>App registration</td><td>Cloud DB (encrypted at rest)</td><td>Life of account + 30 days</td></tr>
+          <tr><td>Biometric/Health Data</td><td>Heart rate, SpO2, sleep stage, ECG</td><td><span class="pill high">High</span></td><td>Wearable sync, in-app sensors</td><td>Cloud DB (segregated, encrypted)</td><td>24 months, then anonymized</td></tr>
+          <tr><td>Location Data</td><td>GPS route, geofence events</td><td><span class="pill high">High</span></td><td>Background/foreground GPS</td><td>Cloud DB (encrypted)</td><td>90 days, then aggregated</td></tr>
+          <tr><td>Usage/Behavioral Data</td><td>Session length, feature taps, workout logs</td><td><span class="pill low">Low</span></td><td>In-app analytics SDK</td><td>Analytics vendor + internal DB</td><td>12 months</td></tr>
+          <tr><td>Payment Data</td><td>Card token, billing address</td><td><span class="pill high">High</span></td><td>Checkout flow</td><td>PCI-DSS processor (tokenized)</td><td>Per processor policy</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="s5">
+    <h2><span class="num">05</span> Risk Assessment &amp; Register</h2>
+    <p>Six key risks identified through the data lifecycle walkthrough, rated for inherent risk (before controls) and residual risk (after the recommended control is applied).</p>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>ID</th><th>Risk description</th><th>Likelihood</th><th>Impact</th><th>Inherent</th><th>Recommended control</th><th>Residual</th></tr></thead>
+        <tbody>
+          <tr><td class="id-cell">R1</td><td>Health/biometric data transmitted without end-to-end encryption between wearable and app</td><td><span class="pill medium">Medium</span></td><td><span class="pill high">High</span></td><td><span class="pill high">High</span></td><td>Enforce TLS 1.2+ in transit; add payload-level encryption for biometric fields</td><td><span class="pill low">Low</span></td></tr>
+          <tr><td class="id-cell">R2</td><td>Over-broad consent language fails to meet GDPR/CCPA specificity requirements for health data</td><td><span class="pill high">High</span></td><td><span class="pill high">High</span></td><td><span class="pill high">High</span></td><td>Redesign consent flow with granular, purpose-specific opt-ins and plain-language notice</td><td><span class="pill medium">Medium</span></td></tr>
+          <tr><td class="id-cell">R3</td><td>Third-party analytics SDK receives raw location data instead of aggregated/anonymized data</td><td><span class="pill high">High</span></td><td><span class="pill medium">Medium</span></td><td><span class="pill high">High</span></td><td>Apply data minimization; strip precise GPS before sending to analytics vendor</td><td><span class="pill low">Low</span></td></tr>
+          <tr><td class="id-cell">R4</td><td>No documented process for data subject access/deletion requests (DSAR)</td><td><span class="pill medium">Medium</span></td><td><span class="pill medium">Medium</span></td><td><span class="pill medium">Medium</span></td><td>Implement DSAR intake workflow with defined SLAs and audit log</td><td><span class="pill low">Low</span></td></tr>
+          <tr><td class="id-cell">R5</td><td>Indefinite retention of raw biometric data beyond stated purpose</td><td><span class="pill medium">Medium</span></td><td><span class="pill high">High</span></td><td><span class="pill high">High</span></td><td>Define retention schedule; auto-anonymize/purge after 24 months</td><td><span class="pill medium">Medium</span></td></tr>
+          <tr><td class="id-cell">R6</td><td>Vendor (cloud host, analytics, push notification) risk not assessed prior to onboarding</td><td><span class="pill medium">Medium</span></td><td><span class="pill medium">Medium</span></td><td><span class="pill medium">Medium</span></td><td>Introduce vendor privacy/security due-diligence checklist and DPA requirement</td><td><span class="pill low">Low</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="s6">
+    <h2><span class="num">06</span> Key Findings</h2>
+    <div class="finding">Biometric and health data are the App's highest-sensitivity assets and require handling controls beyond those applied to general account data.</div>
+    <div class="finding">Consent mechanisms do not currently meet the specificity and granularity expected under GDPR Art. 9 (special category data) or CCPA sensitive personal information provisions.</div>
+    <div class="finding">Third-party SDKs (analytics, crash reporting) can become an unintended path for sensitive data to leave the App's control boundary if payloads are not minimized.</div>
+    <div class="finding">No formal data retention or deletion schedule exists for biometric data, creating unnecessary exposure.</div>
+  </section>
+
+  <section id="s7">
+    <h2><span class="num">07</span> Recommended Data Protection Framework</h2>
+    <h3>7.1 Governance</h3>
+    <ul>
+      <li>Designate a privacy owner responsible for DPIAs on new features touching health or location data</li>
+      <li>Maintain a living data inventory/record of processing activities (ROPA)</li>
+    </ul>
+    <h3>7.2 Technical Controls</h3>
+    <ul>
+      <li>Encrypt sensitive fields (biometric, location) at the application layer, in addition to transport-layer TLS</li>
+      <li>Apply data minimization before data reaches third-party SDKs</li>
+      <li>Implement automated retention enforcement (scheduled anonymization/deletion jobs)</li>
+    </ul>
+    <h3>7.3 Privacy by Design</h3>
+    <ul>
+      <li>Redesign consent UX to capture granular, purpose-specific permissions with plain-language explanations</li>
+      <li>Build a self-service DSAR workflow with audit logging</li>
+    </ul>
+    <h3>7.4 Third-Party Risk Management</h3>
+    <ul>
+      <li>Require a signed Data Processing Agreement (DPA) and privacy/security questionnaire before onboarding any vendor that touches personal data</li>
+    </ul>
+  </section>
+
+  <section id="s8">
+    <h2><span class="num">08</span> Conclusion</h2>
+    <p>Applying a structured privacy risk assessment methodology to the App surfaced concrete, prioritized gaps rather than generic recommendations — from encryption of specific data fields to the redesign of consent flows. The proposed framework gives the organization a phased path to reduce residual risk across all six identified findings while building the governance foundation needed to support ongoing compliance as the App's data use evolves.</p>
+  </section>
+
+  <footer class="note">Rendered preview of Privacy_Risk_Assessment_Report.docx — the .docx file is the deliverable; open it in Word for final formatting.</footer>
+</div>

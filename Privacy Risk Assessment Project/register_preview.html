@@ -1,0 +1,190 @@
+<title>Risk Register Output</title>
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --app-bg:#E7E9E4; --toolbar:#2F5D62; --toolbar-ink:#FFFFFF;
+    --sheet-bg:#FFFFFF; --grid:#D6D9D3; --ink:#1B1F1E; --ink-soft:#5B6460;
+    --head-fill:#E4EEEC; --head-ink:#1E3F42;
+    --tab-bg:#DCDFD9; --tab-active:#FFFFFF; --tab-ink:#4A534F; --tab-active-ink:#2F5D62;
+    --green-bg:#DEEFE2; --green-fg:#1B6B3A;
+    --amber-bg:#F6E7C8; --amber-fg:#7A5A12;
+    --red-bg:#FBE4E1; --red-fg:#8A241B;
+    --accent-2:#8A6D3B;
+    --shadow:0 1px 2px rgba(20,30,28,0.08), 0 10px 28px rgba(20,30,28,0.10);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --app-bg:#111414; --toolbar:#1D3638; --toolbar-ink:#EAF3F2;
+      --sheet-bg:#1B1F1F; --grid:#333938; --ink:#E9ECEA; --ink-soft:#9AA3A0;
+      --head-fill:#1F3436; --head-ink:#AEE6E2;
+      --tab-bg:#191C1C; --tab-active:#1B1F1F; --tab-ink:#8B948F; --tab-active-ink:#7FC2C6;
+      --green-bg:#1E3426; --green-fg:#73D99A;
+      --amber-bg:#3A2F17; --amber-fg:#F0C86A;
+      --red-bg:#3A2320; --red-fg:#FF8A7A;
+      --accent-2:#D3B077;
+      --shadow:0 1px 2px rgba(0,0,0,0.4), 0 10px 28px rgba(0,0,0,0.4);
+    }
+  }
+  :root[data-theme="dark"]{
+    --app-bg:#111414; --toolbar:#1D3638; --toolbar-ink:#EAF3F2;
+    --sheet-bg:#1B1F1F; --grid:#333938; --ink:#E9ECEA; --ink-soft:#9AA3A0;
+    --head-fill:#1F3436; --head-ink:#AEE6E2;
+    --tab-bg:#191C1C; --tab-active:#1B1F1F; --tab-ink:#8B948F; --tab-active-ink:#7FC2C6;
+    --green-bg:#1E3426; --green-fg:#73D99A;
+    --amber-bg:#3A2F17; --amber-fg:#F0C86A;
+    --red-bg:#3A2320; --red-fg:#FF8A7A;
+    --accent-2:#D3B077;
+    --shadow:0 1px 2px rgba(0,0,0,0.4), 0 10px 28px rgba(0,0,0,0.4);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--app-bg);color:var(--ink);font-family:"IBM Plex Sans",Arial,sans-serif;padding-inline:16px;padding-block:24px;}
+  .wrap{max-width:980px;margin:0 auto;}
+
+  .toolbar{background:var(--toolbar);color:var(--toolbar-ink);border-radius:10px 10px 0 0;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .toolbar .fname{font-weight:600;font-size:14px;}
+  .toolbar .fmeta{font-family:"IBM Plex Mono",monospace;font-size:11px;opacity:0.85;}
+
+  .app{background:var(--sheet-bg);border:1px solid var(--grid);border-top:none;border-radius:0 0 10px 10px;box-shadow:var(--shadow);overflow:hidden;}
+
+  .sheet{display:none;padding:20px;}
+  .sheet.active{display:block;}
+
+  .table-scroll{overflow-x:auto;}
+  table{border-collapse:collapse;width:100%;min-width:720px;font-size:13px;}
+  thead th{background:var(--head-fill);color:var(--head-ink);text-align:left;padding:8px 10px;border:1px solid var(--grid);font-weight:600;font-size:12px;white-space:nowrap;}
+  tbody td{padding:8px 10px;border:1px solid var(--grid);vertical-align:top;color:var(--ink);}
+  td.id{font-family:"IBM Plex Mono",monospace;font-weight:600;color:var(--accent-2);white-space:nowrap;}
+  td.rate{text-align:center;font-weight:600;white-space:nowrap;}
+  td.rate.High{background:var(--red-bg);color:var(--red-fg);}
+  td.rate.Medium{background:var(--amber-bg);color:var(--amber-fg);}
+  td.rate.Low{background:var(--green-bg);color:var(--green-fg);}
+  td.dropdown{position:relative;}
+  td.dropdown .dd{display:flex;align-items:center;justify-content:space-between;gap:6px;}
+  td.dropdown .dd::after{content:"▾";font-size:10px;color:var(--ink-soft);}
+
+  .matrix-wrap{max-width:420px;}
+  .matrix-wrap table{min-width:0;}
+  .matrix-wrap td.cell{text-align:center;font-weight:600;}
+
+  .legend{display:flex;gap:14px;margin-top:14px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-soft);}
+  .legend span.swatch{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px;}
+
+  .instr h2{font-size:16px;margin:0 0 10px;color:var(--head-ink);}
+  .instr ol{margin:0;padding-left:1.3em;}
+  .instr li{margin-bottom:9px;line-height:1.55;font-size:14px;}
+  .instr .note{margin-top:4px;font-size:12px;color:var(--ink-soft);}
+
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:6px;}
+  .stat{border:1px solid var(--grid);border-radius:8px;padding:12px 14px;}
+  .stat .l{font-family:"IBM Plex Mono",monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:0.05em;color:var(--ink-soft);margin-bottom:6px;}
+  .stat .v{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;}
+  .stat .v.High{color:var(--red-fg);} .stat .v.Medium{color:var(--amber-fg);} .stat .v.Low{color:var(--green-fg);}
+
+  .tabs{display:flex;background:var(--tab-bg);border-top:1px solid var(--grid);overflow-x:auto;}
+  .tab{padding:10px 18px;font-size:12.5px;font-weight:600;color:var(--tab-ink);background:transparent;border:none;border-right:1px solid var(--grid);cursor:pointer;white-space:nowrap;font-family:inherit;}
+  .tab.active{background:var(--tab-active);color:var(--tab-active-ink);box-shadow:inset 0 2px 0 var(--tab-active-ink);}
+  .tab:focus-visible{outline:2px solid var(--accent-2);outline-offset:-2px;}
+
+  .caption{font-size:12.5px;color:var(--ink-soft);margin:16px 0 0;font-family:"IBM Plex Mono",monospace;}
+</style>
+
+<div class="wrap">
+  <div class="toolbar">
+    <span class="fname">Privacy_Risk_Register.xlsx</span>
+    <span class="fmeta">4 sheets · formulas computed on open</span>
+  </div>
+  <div class="app">
+
+    <div class="sheet active" id="sheet-instructions">
+      <div class="instr">
+        <h2>Privacy Risk Register — How to Use</h2>
+        <p style="color:var(--ink-soft);font-size:13px;margin-top:-4px;">Self-directed project: Cyber Risk Advisory &amp; Privacy Tech — case study on a healthcare/fitness mobile app</p>
+        <ol>
+          <li>Go to the <strong>Risk Register</strong> tab. Six example risks are already filled in — these are samples, not real findings.</li>
+          <li>To add your own risk: fill in a new row — Risk ID, Data Category, Risk Description, Likelihood, Impact, Recommended Control, Residual Likelihood, Residual Impact.</li>
+          <li>Likelihood, Impact, Residual Likelihood and Residual Impact are dropdowns — click the cell and choose Low, Medium, or High.</li>
+          <li>Don't type into <strong>Inherent Risk</strong> or <strong>Residual Risk</strong> — they calculate automatically from the Risk Matrix tab and are color-coded green/amber/red.</li>
+          <li>The <strong>Summary</strong> tab totals everything automatically — no manual updates needed.</li>
+          <li>The <strong>Risk Matrix</strong> tab shows the scoring logic this register is built on — reference only.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="sheet" id="sheet-matrix">
+      <div class="matrix-wrap">
+        <table>
+          <thead><tr><th>Likelihood ↓ / Impact →</th><th>Low</th><th>Medium</th><th>High</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600;background:var(--head-fill);">Low</td><td class="cell" style="background:var(--green-bg);color:var(--green-fg);">Low</td><td class="cell" style="background:var(--green-bg);color:var(--green-fg);">Low</td><td class="cell" style="background:var(--amber-bg);color:var(--amber-fg);">Medium</td></tr>
+            <tr><td style="font-weight:600;background:var(--head-fill);">Medium</td><td class="cell" style="background:var(--green-bg);color:var(--green-fg);">Low</td><td class="cell" style="background:var(--amber-bg);color:var(--amber-fg);">Medium</td><td class="cell" style="background:var(--red-bg);color:var(--red-fg);">High</td></tr>
+            <tr><td style="font-weight:600;background:var(--head-fill);">High</td><td class="cell" style="background:var(--amber-bg);color:var(--amber-fg);">Medium</td><td class="cell" style="background:var(--red-bg);color:var(--red-fg);">High</td><td class="cell" style="background:var(--red-bg);color:var(--red-fg);">High</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="legend">
+        <span><span class="swatch" style="background:var(--green-bg);border:1px solid var(--green-fg);"></span>Low — monitor</span>
+        <span><span class="swatch" style="background:var(--amber-bg);border:1px solid var(--amber-fg);"></span>Medium — plan mitigation</span>
+        <span><span class="swatch" style="background:var(--red-bg);border:1px solid var(--red-fg);"></span>High — mitigate immediately</span>
+      </div>
+    </div>
+
+    <div class="sheet" id="sheet-register">
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Risk ID</th><th>Data Category</th><th>Risk Description</th><th>Likelihood</th><th>Impact</th><th>Inherent Risk</th><th>Recommended Control</th><th>Res. Likelihood</th><th>Res. Impact</th><th>Residual Risk</th></tr></thead>
+          <tbody>
+            <tr><td class="id">R1</td><td>Biometric/Health Data</td><td>Health/biometric data transmitted without end-to-end encryption between wearable and app</td><td class="dropdown"><span class="dd">Medium</span></td><td class="dropdown"><span class="dd">High</span></td><td class="rate High">High</td><td>Enforce TLS 1.2+ in transit; add payload-level encryption for biometric fields</td><td class="dropdown"><span class="dd">Low</span></td><td class="dropdown"><span class="dd">Low</span></td><td class="rate Low">Low</td></tr>
+            <tr><td class="id">R2</td><td>Account/Identity Data</td><td>Over-broad consent language fails to meet GDPR/CCPA specificity requirements for health data</td><td class="dropdown"><span class="dd">High</span></td><td class="dropdown"><span class="dd">High</span></td><td class="rate High">High</td><td>Redesign consent flow with granular, purpose-specific opt-ins and plain-language notice</td><td class="dropdown"><span class="dd">Low</span></td><td class="dropdown"><span class="dd">Medium</span></td><td class="rate Low">Low</td></tr>
+            <tr><td class="id">R3</td><td>Location Data</td><td>Third-party analytics SDK receives raw location data instead of aggregated/anonymized data</td><td class="dropdown"><span class="dd">High</span></td><td class="dropdown"><span class="dd">Medium</span></td><td class="rate High">High</td><td>Apply data minimization; strip precise GPS before sending to analytics vendor</td><td class="dropdown"><span class="dd">Low</span></td><td class="dropdown"><span class="dd">Low</span></td><td class="rate Low">Low</td></tr>
+            <tr><td class="id">R4</td><td>Account/Identity Data</td><td>No documented process for data subject access/deletion requests (DSAR)</td><td class="dropdown"><span class="dd">Medium</span></td><td class="dropdown"><span class="dd">Medium</span></td><td class="rate Medium">Medium</td><td>Implement DSAR intake workflow with defined SLAs and audit log</td><td class="dropdown"><span class="dd">Low</span></td><td class="dropdown"><span class="dd">Low</span></td><td class="rate Low">Low</td></tr>
+            <tr><td class="id">R5</td><td>Biometric/Health Data</td><td>Indefinite retention of raw biometric data beyond stated purpose</td><td class="dropdown"><span class="dd">Medium</span></td><td class="dropdown"><span class="dd">High</span></td><td class="rate High">High</td><td>Define retention schedule; auto-anonymize/purge after 24 months</td><td class="dropdown"><span class="dd">Low</span></td><td class="dropdown"><span class="dd">Medium</span></td><td class="rate Low">Low</td></tr>
+            <tr><td class="id">R6</td><td>Usage/Behavioral Data</td><td>Vendor (cloud host, analytics, push notification) risk not assessed prior to onboarding</td><td class="dropdown"><span class="dd">Medium</span></td><td class="dropdown"><span class="dd">Medium</span></td><td class="rate Medium">Medium</td><td>Introduce vendor privacy/security due-diligence checklist and DPA requirement</td><td class="dropdown"><span class="dd">Low</span></td><td class="dropdown"><span class="dd">Low</span></td><td class="rate Low">Low</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="caption">Rows 7–100 are blank, pre-formatted rows ready for you to add more risks — dropdowns and formulas are already in place.</div>
+    </div>
+
+    <div class="sheet" id="sheet-summary">
+      <div class="stat-grid">
+        <div class="stat"><div class="l">Total risks logged</div><div class="v">6</div></div>
+        <div class="stat"><div class="l">Risks reduced by a control</div><div class="v Low">6</div></div>
+      </div>
+      <div class="stat-grid" style="margin-top:16px;">
+        <div class="stat"><div class="l">Inherent — High</div><div class="v High">4</div></div>
+        <div class="stat"><div class="l">Inherent — Medium</div><div class="v Medium">2</div></div>
+        <div class="stat"><div class="l">Inherent — Low</div><div class="v Low">0</div></div>
+      </div>
+      <div class="stat-grid" style="margin-top:16px;">
+        <div class="stat"><div class="l">Residual — High</div><div class="v High">0</div></div>
+        <div class="stat"><div class="l">Residual — Medium</div><div class="v Medium">0</div></div>
+        <div class="stat"><div class="l">Residual — Low</div><div class="v Low">6</div></div>
+      </div>
+      <div class="caption">All values are live COUNTIF/SUM formulas — they recalculate automatically as rows are added.</div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-target="sheet-instructions" type="button">Instructions</button>
+      <button class="tab" data-target="sheet-matrix" type="button">Risk Matrix</button>
+      <button class="tab" data-target="sheet-register" type="button">Risk Register</button>
+      <button class="tab" data-target="sheet-summary" type="button">Summary</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var tabs = document.querySelectorAll(".tab");
+  tabs.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      tabs.forEach(function(b){ b.classList.remove("active"); });
+      document.querySelectorAll(".sheet").forEach(function(s){ s.classList.remove("active"); });
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.target).classList.add("active");
+    });
+  });
+})();
+</script>

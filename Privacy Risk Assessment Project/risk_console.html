@@ -1,0 +1,413 @@
+<title>Privacy Risk Console</title>
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F6F3; --paper-raised:#FFFFFF; --field:#FBFCFA;
+    --ink:#1B1F1E; --ink-soft:#56605C; --ink-faint:#8A938E;
+    --accent:#2F5D62; --accent-ink:#FFFFFF; --accent-soft:#E4EEEC;
+    --accent-2:#8A6D3B;
+    --line:#D9DCD6;
+    --risk-high-bg:#FBE4E1; --risk-high-fg:#8A241B; --risk-high-solid:#C1392C;
+    --risk-med-bg:#F6E7C8; --risk-med-fg:#7A5A12; --risk-med-solid:#C99A2E;
+    --risk-low-bg:#DEEFE2; --risk-low-fg:#1B6B3A; --risk-low-solid:#2E9154;
+    --danger:#B3261E;
+    --shadow: 0 1px 2px rgba(20,30,28,0.06), 0 8px 24px rgba(20,30,28,0.05);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#15191A; --paper-raised:#1D2223; --field:#202626;
+      --ink:#E9ECEA; --ink-soft:#A9B2AE; --ink-faint:#798381;
+      --accent:#7FC2C6; --accent-ink:#0E1A1B; --accent-soft:#1F3436;
+      --accent-2:#D3B077;
+      --line:#2B3233;
+      --risk-high-bg:#3A2320; --risk-high-fg:#FF8A7A; --risk-high-solid:#E06656;
+      --risk-med-bg:#3A2F17; --risk-med-fg:#F0C86A; --risk-med-solid:#D8AE4E;
+      --risk-low-bg:#1E3426; --risk-low-fg:#73D99A; --risk-low-solid:#4CBE7D;
+      --danger:#FF8A7A;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#15191A; --paper-raised:#1D2223; --field:#202626;
+    --ink:#E9ECEA; --ink-soft:#A9B2AE; --ink-faint:#798381;
+    --accent:#7FC2C6; --accent-ink:#0E1A1B; --accent-soft:#1F3436;
+    --accent-2:#D3B077;
+    --line:#2B3233;
+    --risk-high-bg:#3A2320; --risk-high-fg:#FF8A7A; --risk-high-solid:#E06656;
+    --risk-med-bg:#3A2F17; --risk-med-fg:#F0C86A; --risk-med-solid:#D8AE4E;
+    --risk-low-bg:#1E3426; --risk-low-fg:#73D99A; --risk-low-solid:#4CBE7D;
+    --danger:#FF8A7A;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+  }
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif;padding-inline:18px;padding-block:28px;}
+  .wrap{max-width:980px;margin:0 auto;}
+  a{color:var(--accent);}
+
+  header.top{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-end;margin-bottom:22px;}
+  .title-block h1{
+    font-family:"Source Serif 4",Georgia,serif;font-weight:700;
+    font-size:clamp(24px,4vw,32px);line-height:1.15;margin:0 0 6px;letter-spacing:-0.01em;text-wrap:balance;
+  }
+  .title-block p{margin:0;color:var(--ink-soft);font-size:14.5px;max-width:56ch;}
+  .top-actions{display:flex;gap:8px;flex-wrap:wrap;}
+
+  button{font-family:inherit;font-size:13.5px;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--paper-raised);color:var(--ink);padding:9px 14px;font-weight:600;}
+  button:hover{border-color:var(--accent);}
+  button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+  button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
+  button.ghost{background:transparent;}
+  button.danger-ghost{color:var(--danger);border-color:var(--line);background:transparent;}
+  button.danger-ghost:hover{border-color:var(--danger);}
+
+  .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:22px;}
+  .stat{background:var(--paper-raised);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow);}
+  .stat .label{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:6px;}
+  .stat .value{font-family:"Source Serif 4",Georgia,serif;font-size:28px;font-weight:700;font-variant-numeric:tabular-nums;}
+  .stat .value.high{color:var(--risk-high-solid);}
+  .stat .value.med{color:var(--risk-med-solid);}
+  .stat .value.low{color:var(--risk-low-solid);}
+  .bar{display:flex;height:6px;border-radius:4px;overflow:hidden;margin-top:10px;background:var(--line);}
+  .bar span{display:block;height:100%;}
+
+  .layout{display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start;}
+  @media (max-width:760px){.layout{grid-template-columns:1fr;}}
+
+  .card{background:var(--paper-raised);border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:var(--shadow);}
+  .card h2{font-size:14px;margin:0 0 14px;font-family:"IBM Plex Mono",monospace;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink-soft);}
+
+  .field{margin-bottom:13px;}
+  .field label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-soft);margin-bottom:5px;}
+  .field input, .field select, .field textarea{
+    width:100%;background:var(--field);border:1px solid var(--line);border-radius:7px;
+    padding:8px 10px;font-size:14px;color:var(--ink);font-family:inherit;
+  }
+  .field textarea{resize:vertical;min-height:52px;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+  .preview-badge{display:flex;align-items:center;gap:8px;margin:4px 0 14px;font-size:13px;color:var(--ink-soft);}
+
+  .pill{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:11.5px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap;}
+  .pill.High{background:var(--risk-high-bg);color:var(--risk-high-fg);}
+  .pill.Medium{background:var(--risk-med-bg);color:var(--risk-med-fg);}
+  .pill.Low{background:var(--risk-low-bg);color:var(--risk-low-fg);}
+
+  .banner{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:var(--accent-soft);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:var(--ink-soft);}
+
+  .table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px;}
+  table{border-collapse:collapse;width:100%;min-width:680px;background:var(--paper-raised);font-size:13.5px;}
+  thead th{text-align:left;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:0.05em;text-transform:uppercase;color:var(--ink-faint);background:var(--accent-soft);padding:9px 11px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  tbody td{padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink);}
+  tbody tr:last-child td{border-bottom:none;}
+  td.id-cell{font-family:"IBM Plex Mono",monospace;font-weight:600;color:var(--accent);white-space:nowrap;}
+  td.desc-cell{max-width:220px;}
+  td.control-cell{max-width:220px;color:var(--ink-soft);}
+  .example-tag{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:0.05em;text-transform:uppercase;color:var(--accent-2);border:1px solid var(--accent-2);border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:middle;}
+  .row-actions button{padding:4px 9px;font-size:12px;}
+  .empty{padding:30px 16px;text-align:center;color:var(--ink-faint);font-size:14px;}
+
+  footer.note{margin-top:22px;font-size:12px;color:var(--ink-faint);font-family:"IBM Plex Mono",monospace;}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="title-block">
+      <h1>Privacy Risk Console</h1>
+      <p>Score data-privacy risks with a likelihood × impact matrix aligned to the NIST Privacy Framework, and build a prioritized risk register with recommended controls.</p>
+    </div>
+    <div class="top-actions">
+      <button class="ghost" id="btnSample" type="button">Load sample app data</button>
+      <button class="danger-ghost" id="btnClear" type="button">Clear all</button>
+    </div>
+  </header>
+
+  <div class="stat-row">
+    <div class="stat">
+      <div class="label">Total risks</div>
+      <div class="value" id="statTotal">0</div>
+    </div>
+    <div class="stat">
+      <div class="label">Inherent risk mix</div>
+      <div class="value" id="statInherentHigh">&nbsp;</div>
+      <div class="bar" id="barInherent"></div>
+    </div>
+    <div class="stat">
+      <div class="label">Reduced by a control</div>
+      <div class="value low" id="statReduced">0</div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="card">
+      <h2>Add a risk</h2>
+      <form id="riskForm">
+        <div class="field">
+          <label for="f-category">Data category</label>
+          <input id="f-category" list="category-options" placeholder="e.g. Biometric/Health Data" required>
+          <datalist id="category-options">
+            <option value="Account/Identity Data">
+            <option value="Biometric/Health Data">
+            <option value="Location Data">
+            <option value="Usage/Behavioral Data">
+            <option value="Payment Data">
+          </datalist>
+        </div>
+        <div class="field">
+          <label for="f-desc">Risk description</label>
+          <textarea id="f-desc" placeholder="What could go wrong, and under what condition?" required></textarea>
+        </div>
+        <div class="two-col">
+          <div class="field">
+            <label for="f-likelihood">Likelihood</label>
+            <select id="f-likelihood"><option>Low</option><option selected>Medium</option><option>High</option></select>
+          </div>
+          <div class="field">
+            <label for="f-impact">Impact</label>
+            <select id="f-impact"><option>Low</option><option selected>Medium</option><option>High</option></select>
+          </div>
+        </div>
+        <div class="preview-badge">Inherent risk: <span class="pill" id="inherentPreview">Medium</span></div>
+        <div class="field">
+          <label for="f-control">Recommended control</label>
+          <textarea id="f-control" placeholder="The specific mitigation you'd apply"></textarea>
+        </div>
+        <div class="two-col">
+          <div class="field">
+            <label for="f-res-likelihood">Residual likelihood</label>
+            <select id="f-res-likelihood"><option selected>Low</option><option>Medium</option><option>High</option></select>
+          </div>
+          <div class="field">
+            <label for="f-res-impact">Residual impact</label>
+            <select id="f-res-impact"><option selected>Low</option><option>Medium</option><option>High</option></select>
+          </div>
+        </div>
+        <div class="preview-badge">Residual risk: <span class="pill" id="residualPreview">Low</span></div>
+        <button class="primary" type="submit" style="width:100%;margin-top:4px;">Add to register</button>
+      </form>
+    </div>
+
+    <div>
+      <div class="banner" id="sampleBanner" hidden>
+        <span>Showing example risks for a healthcare/fitness app. Edit the form to add your own, or remove individual examples.</span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th>ID</th><th>Risk</th><th>Likelihood</th><th>Impact</th><th>Inherent</th><th>Control</th><th>Residual</th><th></th></tr>
+          </thead>
+          <tbody id="registerBody"></tbody>
+        </table>
+        <div class="empty" id="emptyState" hidden>No risks yet — add one on the left, or load sample data.</div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="note">Saved locally in this browser only. Risk rating uses a standard 3×3 likelihood/impact matrix.</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var STORAGE_KEY = "privacyRiskConsole.v1";
+  var LEVELS = ["Low","Medium","High"];
+  var MATRIX = {
+    Low:    { Low:"Low",    Medium:"Low",    High:"Medium" },
+    Medium: { Low:"Low",    Medium:"Medium", High:"High"   },
+    High:   { Low:"Medium", Medium:"High",   High:"High"   }
+  };
+  var RANK = { Low:1, Medium:2, High:3 };
+
+  var SAMPLE = [
+    { category:"Biometric/Health Data", desc:"Health/biometric data transmitted without end-to-end encryption between wearable and app", likelihood:"Medium", impact:"High", control:"Enforce TLS 1.2+ in transit; add payload-level encryption for biometric fields", resLikelihood:"Low", resImpact:"Low", example:true },
+    { category:"Account/Identity Data", desc:"Over-broad consent language fails to meet GDPR/CCPA specificity requirements for health data", likelihood:"High", impact:"High", control:"Redesign consent flow with granular, purpose-specific opt-ins and plain-language notice", resLikelihood:"Low", resImpact:"Medium", example:true },
+    { category:"Location Data", desc:"Third-party analytics SDK receives raw location data instead of aggregated/anonymized data", likelihood:"High", impact:"Medium", control:"Apply data minimization; strip precise GPS before sending to analytics vendor", resLikelihood:"Low", resImpact:"Low", example:true },
+    { category:"Account/Identity Data", desc:"No documented process for data subject access/deletion requests (DSAR)", likelihood:"Medium", impact:"Medium", control:"Implement DSAR intake workflow with defined SLAs and audit log", resLikelihood:"Low", resImpact:"Low", example:true },
+    { category:"Biometric/Health Data", desc:"Indefinite retention of raw biometric data beyond stated purpose", likelihood:"Medium", impact:"High", control:"Define retention schedule; auto-anonymize/purge after 24 months", resLikelihood:"Low", resImpact:"Medium", example:true },
+    { category:"Usage/Behavioral Data", desc:"Vendor (cloud host, analytics, push notification) risk not assessed prior to onboarding", likelihood:"Medium", impact:"Medium", control:"Introduce vendor privacy/security due-diligence checklist and DPA requirement", resLikelihood:"Low", resImpact:"Low", example:true }
+  ];
+
+  var state = { risks: [], nextId: 1 };
+
+  function load(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        var parsed = JSON.parse(raw);
+        if(parsed && Array.isArray(parsed.risks)){ state = parsed; return; }
+      }
+    }catch(e){}
+    seedSample();
+  }
+  function save(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+  function seedSample(){
+    state = { risks: [], nextId: 1 };
+    SAMPLE.forEach(function(r){ addRisk(r, false); });
+  }
+  function addRisk(r, persist){
+    var id = "R" + state.nextId++;
+    state.risks.push({
+      id:id, category:r.category, desc:r.desc,
+      likelihood:r.likelihood, impact:r.impact,
+      control:r.control || "",
+      resLikelihood:r.resLikelihood, resImpact:r.resImpact,
+      example: !!r.example
+    });
+    if(persist !== false) save();
+  }
+  function removeRisk(id){
+    state.risks = state.risks.filter(function(r){ return r.id !== id; });
+    save(); render();
+  }
+
+  function el(tag, cls, text){
+    var e = document.createElement(tag);
+    if(cls) e.className = cls;
+    if(text !== undefined) e.textContent = text;
+    return e;
+  }
+  function pill(level){
+    var s = el("span", "pill " + level, level);
+    return s;
+  }
+
+  function render(){
+    var body = document.getElementById("registerBody");
+    var empty = document.getElementById("emptyState");
+    body.innerHTML = "";
+    var hasExample = false;
+
+    state.risks.forEach(function(r){
+      if(r.example) hasExample = true;
+      var inherent = MATRIX[r.likelihood][r.impact];
+      var residual = MATRIX[r.resLikelihood][r.resImpact];
+      var tr = document.createElement("tr");
+
+      var tdId = el("td", "id-cell", r.id);
+      tr.appendChild(tdId);
+
+      var tdDesc = el("td", "desc-cell");
+      var catSpan = el("strong", null, r.category);
+      tdDesc.appendChild(catSpan);
+      if(r.example){
+        var tag = el("span", "example-tag", "Example");
+        tdDesc.appendChild(tag);
+      }
+      tdDesc.appendChild(document.createElement("br"));
+      tdDesc.appendChild(document.createTextNode(r.desc));
+      tr.appendChild(tdDesc);
+
+      var tdLike = el("td"); tdLike.appendChild(pill(r.likelihood)); tr.appendChild(tdLike);
+      var tdImp = el("td"); tdImp.appendChild(pill(r.impact)); tr.appendChild(tdImp);
+      var tdInh = el("td"); tdInh.appendChild(pill(inherent)); tr.appendChild(tdInh);
+      var tdCtrl = el("td", "control-cell", r.control || "—"); tr.appendChild(tdCtrl);
+      var tdRes = el("td"); tdRes.appendChild(pill(residual)); tr.appendChild(tdRes);
+
+      var tdAct = el("td", "row-actions");
+      var delBtn = el("button", "danger-ghost", "Remove");
+      delBtn.type = "button";
+      delBtn.addEventListener("click", function(){ removeRisk(r.id); });
+      tdAct.appendChild(delBtn);
+      tr.appendChild(tdAct);
+
+      body.appendChild(tr);
+    });
+
+    empty.hidden = state.risks.length !== 0;
+    document.getElementById("sampleBanner").hidden = !hasExample;
+
+    var total = state.risks.length;
+    var counts = { Low:0, Medium:0, High:0 };
+    var reduced = 0;
+    state.risks.forEach(function(r){
+      var inherent = MATRIX[r.likelihood][r.impact];
+      var residual = MATRIX[r.resLikelihood][r.resImpact];
+      counts[inherent]++;
+      if(RANK[residual] < RANK[inherent]) reduced++;
+    });
+
+    document.getElementById("statTotal").textContent = String(total);
+    document.getElementById("statReduced").textContent = String(reduced);
+
+    var high = counts.High, med = counts.Medium, low = counts.Low;
+    var statEl = document.getElementById("statInherentHigh");
+    statEl.innerHTML = "";
+    statEl.appendChild(document.createTextNode(high + " "));
+    var sub = el("span", null, "high");
+    sub.style.fontSize = "14px"; sub.style.fontWeight = "600"; sub.style.color = "var(--risk-high-solid)";
+    statEl.appendChild(sub);
+
+    var bar = document.getElementById("barInherent");
+    bar.innerHTML = "";
+    if(total > 0){
+      [["High", high, "var(--risk-high-solid)"], ["Medium", med, "var(--risk-med-solid)"], ["Low", low, "var(--risk-low-solid)"]].forEach(function(seg){
+        if(seg[1] > 0){
+          var s = document.createElement("span");
+          s.style.width = (seg[1] / total * 100) + "%";
+          s.style.background = seg[2];
+          bar.appendChild(s);
+        }
+      });
+    }
+  }
+
+  function updatePreview(){
+    var likelihood = document.getElementById("f-likelihood").value;
+    var impact = document.getElementById("f-impact").value;
+    var inherent = MATRIX[likelihood][impact];
+    var p = document.getElementById("inherentPreview");
+    p.textContent = inherent; p.className = "pill " + inherent;
+
+    var rl = document.getElementById("f-res-likelihood").value;
+    var ri = document.getElementById("f-res-impact").value;
+    var residual = MATRIX[rl][ri];
+    var p2 = document.getElementById("residualPreview");
+    p2.textContent = residual; p2.className = "pill " + residual;
+  }
+
+  document.getElementById("f-likelihood").addEventListener("change", updatePreview);
+  document.getElementById("f-impact").addEventListener("change", updatePreview);
+  document.getElementById("f-res-likelihood").addEventListener("change", updatePreview);
+  document.getElementById("f-res-impact").addEventListener("change", updatePreview);
+
+  document.getElementById("riskForm").addEventListener("submit", function(ev){
+    ev.preventDefault();
+    var category = document.getElementById("f-category").value.trim();
+    var desc = document.getElementById("f-desc").value.trim();
+    if(!category || !desc) return;
+    addRisk({
+      category: category,
+      desc: desc,
+      likelihood: document.getElementById("f-likelihood").value,
+      impact: document.getElementById("f-impact").value,
+      control: document.getElementById("f-control").value.trim(),
+      resLikelihood: document.getElementById("f-res-likelihood").value,
+      resImpact: document.getElementById("f-res-impact").value,
+      example: false
+    });
+    render();
+    ev.target.reset();
+    document.getElementById("f-res-likelihood").value = "Low";
+    document.getElementById("f-res-impact").value = "Low";
+    updatePreview();
+    document.getElementById("f-category").focus();
+  });
+
+  document.getElementById("btnSample").addEventListener("click", function(){
+    seedSample(); render();
+  });
+  document.getElementById("btnClear").addEventListener("click", function(){
+    state = { risks: [], nextId: 1 };
+    save(); render();
+  });
+
+  load();
+  render();
+  updatePreview();
+})();
+</script>

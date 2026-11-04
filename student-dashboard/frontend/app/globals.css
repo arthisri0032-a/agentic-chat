@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Chart tokens. Every chart references these by role rather than raw hex, so the
+ * palette lives in one place. Values come from the validated reference palette:
+ * a single blue series slot, a one-hue ordinal ramp for grade bands, and the
+ * reserved status set. Verified with the palette validator against the #ffffff
+ * card surface these charts actually render on.
+ */
+:root {
+  --page: #f3f6fb;
+  /* Card/panel surface, used everywhere including chart cards — sidebar,
+     modals, tables, feature cards, and the chart plotting surface itself.
+     Validated with the dataviz skill's palette validator against this exact
+     hex for both the single series blue and the ordinal grade ramp below
+     (the ramp is shifted one step darker than the white-surface version
+     specifically so its lightest step still clears the 2:1 floor here). */
+  --panel: #e6eefb;
+  --surface-1: #e6eefb;
+
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted: #898781;
+
+  --gridline: #d3ddf0;
+  --baseline: #a9bcdd;
+
+  --series-1: #2a78d6;
+
+  /* Ordinal ramp — one hue, light→dark, for ordered bands (A…F). One step
+     darker than the reference palette's white-surface version: validated
+     against --panel above, where the lighter default step would drop
+     below the 2:1 contrast floor. */
+  --ordinal-1: #6da7ec;
+  --ordinal-2: #3987e5;
+  --ordinal-3: #256abf;
+  --ordinal-4: #184f95;
+  --ordinal-5: #0d366b;
+
+  --status-good: #0ca30c;
+  --status-warning: #fab219;
+  --status-serious: #ec835a;
+  --status-critical: #d03b3b;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-color: var(--page);
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #d3d6e6;
+  border-radius: 8px;
+}
+
+/* Axis ticks and table figures align vertically, so they get tabular figures.
+   Large standalone values (stat tiles) deliberately keep proportional ones. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}

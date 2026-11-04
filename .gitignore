@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Backend runtime artifacts
+backend/app/storage/
+backend/app/data/uploaded_docs/*
+!backend/app/data/uploaded_docs/.gitkeep
+backend/.env
+
+# Node / Next.js
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env.local
+
+# Editors / OS
+.vscode/
+.DS_Store
+Thumbs.db

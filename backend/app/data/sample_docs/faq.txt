@@ -1,0 +1,31 @@
+Aurora Robotics — Frequently Asked Questions
+
+Q: What products does Aurora Robotics make?
+A: Aurora Robotics makes the RoboArm X1 desktop robotic arm, the AMC-2 motion controller, and the
+Aurora SDK for controlling Aurora hardware from Python and C++.
+
+Q: Where is Aurora Robotics based?
+A: Aurora Robotics is headquartered in Bengaluru, India, with a smaller hardware lab in Austin, Texas
+focused on motor and gearbox testing.
+
+Q: How do I get support for a defective unit?
+A: Open a support ticket at support.aurora-robotics.example with your order number and a description
+of the issue. Hardware covered under the 24-month warranty is repaired or replaced at no cost; see the
+product manual for what the warranty covers.
+
+Q: Does Aurora offer an educational discount?
+A: Yes. Accredited schools and universities receive a 30% discount on the RoboArm X1 when purchasing
+through the education portal. A minimum order of 3 units is required for the discount to apply.
+
+Q: Can the RoboArm X1 be controlled from ROS?
+A: Yes, a community-maintained ROS2 driver wraps the Aurora SDK. It is not officially supported by
+Aurora Robotics, but the SDK's documented serial protocol is stable across firmware versions, so the
+driver has historically required little maintenance.
+
+Q: What is Aurora Robotics' return policy?
+A: Unused hardware in original packaging can be returned within 30 days of delivery for a full refund
+minus a 5% restocking fee. Custom or bulk orders over 10 units are non-returnable.
+
+Q: How do I contact sales for a bulk order?
+A: Email sales@aurora-robotics.example or use the "Request a Quote" form on the pricing page. Bulk
+orders of 10 or more units typically receive a response within 2 business days.
